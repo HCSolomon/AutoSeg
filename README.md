@@ -3,13 +3,18 @@ An Insight project on building an automated image segmentation pipeline for mach
 
 ## Tech Stack
 
-HDFS
+### HDFS
+Storing image data
 
-Spark
+### Spark
+Batch processing
+
+### TensorFlow
+Segmentation and categorization
 
 ## Data Source
 
-OpenImages (500GB)
+OpenImages (https://storage.googleapis.com/openimages/web/download.html, 500GB)
 
 ## Engineering Challenge
 
@@ -21,3 +26,4 @@ Computer vision is an increasingly popular subject in health science, manufactur
 
 ## MVP
 
+Compile an image dataset of categorized segment masks from a large dataset of unsegmented images using a pipeline which runs a pretrained ML model.
