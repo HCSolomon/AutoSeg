@@ -1,16 +1,25 @@
-# AutoSeg
-An Insight project on building an automated image segmentation pipeline for machine learning training sets.
+# Watson
+Building a Productionalized Machine Learning Platform. This Insight project utilizes Sherlock for transfer learning and scales the this machine learning project to serve many jobs at once while maintaining important information about the models and datasets used.
 
 ## Tech Stack
 
-### HDFS
-Storing image data
+### Flask
+UI
+
+### Cassandra
+Database containing information on models and datasets
+
+### S3
+Storage of raw image data
+
+### Kubernetes
+Deploy Sherlock Docker containers
+
+### Kafka
+Broker messages between different processes
 
 ### Spark
-Batch processing
-
-### TensorFlow
-Segmentation and categorization
+Sink model and dataset information into Cassandra
 
 ## Data Source
 
