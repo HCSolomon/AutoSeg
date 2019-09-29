@@ -1,34 +1,32 @@
+import json
+import requests
+import flask
 from kafka import KafkaConsumer
-consumer = KafkaConsumer('ml_job', 'train', bootstrap_servers=['localhost:9092'])
+from time import sleep
+
+
+KAFKA_BROKER = 'localhost'
+KAFKA_PORT = '9092'
+
+
+def api_request(json_info, ip_address, port):
+    url = 'http://' + ip_address + ":" + port + "/inceptionV3/" + json_info["job_type"]
+    info_files = {
+        'train_bucket_name':  json_info['bucket_name'],
+        'train_bucket_prefix':  json_info['bucket_prefix']
+    }
+    response = requests.post(url, data = info_files)
+    return response
+
+consumer = KafkaConsumer('ml_job',
+                        group_id='sherlock', 
+                        bootstrap_servers=[KAFKA_BROKER + ":" + KAFKA_PORT],
+                        auto_offset_reset='earliest',
+                        value_deserializer=lambda m: json.loads(m.decode('utf-8')))
+
 
 for message in consumer:
-    # message value and key are raw bytes -- decode if necessary!
-    # e.g., for unicode: `message.value.decode('utf-8')`
-    print ("%s:%d:%d: key=%s value=%s" % (message.topic, message.partition,
-                                          message.offset, message.key,
-                                          message.value))
-
-# consume earliest available messages, don't commit offsets
-KafkaConsumer(auto_offset_reset='earliest', enable_auto_commit=False)
-
-# consume json messages
-KafkaConsumer(value_deserializer=lambda m: json.loads(m.decode('ascii')))
-
-# consume msgpack
-KafkaConsumer(value_deserializer=msgpack.unpackb)
-
-# StopIteration if no message after 1sec
-KafkaConsumer(consumer_timeout_ms=1000)
-
-# Subscribe to a regex topic pattern
-consumer = KafkaConsumer()
-consumer.subscribe(pattern='^awesome.*')
-
-# Use multiple consumers in parallel w/ 0.9 kafka brokers
-# typically you would run each on a different server / process / CPU
-consumer1 = KafkaConsumer('my-topic',
-                          group_id='my-group',
-                          bootstrap_servers='my.server.com')
-consumer2 = KafkaConsumer('my-topic',
-                          group_id='my-group',
-                          bootstrap_servers='my.server.com')
+    print(message.value)
+    request_info = message.value
+    api_request(request_info, KAFKA_BROKER, '3031')
+    sleep(20)
