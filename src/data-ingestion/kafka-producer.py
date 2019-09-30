@@ -7,7 +7,6 @@ from kafka import KafkaProducer
 KAFKA_BROKER = 'localhost'
 KAFKA_PORT = '9092'
 
-
 producer = KafkaProducer(bootstrap_servers=[KAFKA_BROKER + ":" + KAFKA_PORT])
 producer = KafkaProducer(value_serializer=lambda m: json.dumps(m).encode('utf-8'))
 
