@@ -2,7 +2,7 @@ import json
 import psycopg2
 
 
-def consume_initial(model_info):
+def consume_initial(msg):
     conn = psycopg2.connect(database='sherlockdb', 
                             user='postgres', 
                             host='localhost', 
@@ -11,10 +11,10 @@ def consume_initial(model_info):
 
     curs = conn.cursor()
     sql = """INSERT INTO model_info (model_name, imageset_name) VALUES (%s,%s) RETURNING model_id;"""
-    dir = model_info['bucket_prefix'].split('/')
+    dir = msg['bucket_prefix'].split('/')
     model_name = dir[-1]
     
-    curs.execute(sql, (model_name, model_info['imageset_name']))
+    curs.execute(sql, (model_name, msg['imageset_name']))
     model_id = curs.fetchone()[0]
     conn.commit()
     curs.close()
@@ -32,7 +32,7 @@ def consume_update(model_info):
     
     curs = conn.cursor()
     classes = model_info['classes']
-    sql = """UPDATE sherlockdb SET classes = %s;"""
+    sql = """UPDATE model_info SET classes = %s;"""
     curs.execute(sql, (json.dumps(classes),))
     conn.commit()
     curs.close()
