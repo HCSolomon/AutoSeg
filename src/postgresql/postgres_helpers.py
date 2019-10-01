@@ -1,3 +1,4 @@
+import json
 import psycopg2
 
 
@@ -27,8 +28,12 @@ def consume_update(model_info):
                             port='1324',
                             password='default')
 
+
     
     curs = conn.cursor()
     classes = model_info['classes']
     sql = """UPDATE sherlockdb SET classes = %s;"""
     curs.execute(sql, (json.dumps(classes),))
+    conn.commit()
+    curs.close()
+    conn.close()
