@@ -6,8 +6,8 @@ import uuid
 def consume_upsert(msg):
         conn = psycopg2.connect(database='sherlockdb', 
                                 user='postgres', 
-                                host='localhost', 
-                                port='5432', 
+                                host='ec2-34-220-127-34.us-west-2.compute.amazonaws.com', 
+                                port='1324', 
                                 password='default')
 
         curs = conn.cursor()
@@ -23,7 +23,6 @@ def consume_upsert(msg):
                 json.dumps(msg['classes']),
                 msg['model_id']
                 )
-        print(params)
         curs.execute(sql, params)
         conn.commit()
         curs.close()

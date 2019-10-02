@@ -16,7 +16,5 @@ def postgres_consumer(topic, group_id):
                             value_deserializer=lambda m: json.loads(m.decode('utf-8')))
 
     for message in consumer:
-        print(message.value)
         msg = message.value
         id = consume_upsert(msg)
-        print('processed')
