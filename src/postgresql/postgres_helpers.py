@@ -10,7 +10,10 @@ def consume_initial(msg):
                             password='default')
 
     curs = conn.cursor()
-    sql = """INSERT INTO model_info (model_name, imageset_name) VALUES (%s,%s) RETURNING model_id;"""
+    sql = """UPDATE model_info SET classes = %s WHERE model_id=%s; 
+            INSERT INTO model_info (%s, %s)
+            SELECT %s, %s, %s
+            WHERE NOT EXISTS (SELECT 1 FROM model_info WHERE model_id=%s);"""
     dir = msg['bucket_prefix'].split('/')
     model_name = dir[-1]
     
