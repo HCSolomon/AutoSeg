@@ -26,7 +26,6 @@ def sherlock_consumer(topic, group_id):
                             value_deserializer=lambda m: json.loads(m.decode('utf-8')))
 
     for message in consumer:
-        print(message.value)
         request_info = message.value
         api_request(request_info, 'localhost', '3031')
     

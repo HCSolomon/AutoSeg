@@ -1,6 +1,7 @@
 import json
 import requests
 import flask
+import uuid
 from kafka import KafkaProducer
 from time import sleep
 
@@ -14,6 +15,7 @@ def sherlock_producer(bucket_name, imageset_name, bucket_prefix, job_type):
                         value_serializer=lambda m: json.dumps(m).encode('utf-8'))
     data = {
         'bucket_name': bucket_name, 
+        'model_id': uuid.uuid1()
         'imageset_name': imageset_name,
         'bucket_prefix': 'models/' + bucket_prefix,
         'job_type': job_type
