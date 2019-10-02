@@ -5,7 +5,7 @@ from kafka import KafkaConsumer
 from postgres_helpers import consume_upsert
 
 
-KAFKA_BROKER = 'localhost'
+KAFKA_BROKER = 'ec2-35-162-75-2.us-west-2.compute.amazonaws.com'
 KAFKA_PORT = '9092'
 
 def postgres_consumer(topic, group_id):
@@ -16,5 +16,7 @@ def postgres_consumer(topic, group_id):
                             value_deserializer=lambda m: json.loads(m.decode('utf-8')))
 
     for message in consumer:
+        print(message.value)
         msg = message.value
         id = consume_upsert(msg)
+        print('processed')
