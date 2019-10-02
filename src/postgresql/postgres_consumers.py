@@ -17,4 +17,6 @@ def postgres_consumer(topic, group_id):
 
     for message in consumer:
         msg = message.value
+        print("Message received")
         id = consume_upsert(msg)
+        print("Message upserted")

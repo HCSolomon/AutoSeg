@@ -6,7 +6,7 @@ import uuid
 def consume_upsert(msg):
         conn = psycopg2.connect(database='sherlockdb', 
                                 user='postgres', 
-                                host='ec2-34-220-127-34.us-west-2.compute.amazonaws.com', 
+                                host='localhost', 
                                 port='1324', 
                                 password='default')
 
