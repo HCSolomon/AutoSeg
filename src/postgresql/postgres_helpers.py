@@ -1,8 +1,9 @@
 import json
 import psycopg2
+import uuid
 
 
-def consume_initial(msg):
+def consume_upsert(msg):
     conn = psycopg2.connect(database='sherlockdb', 
                             user='postgres', 
                             host='localhost', 
@@ -11,32 +12,20 @@ def consume_initial(msg):
 
     curs = conn.cursor()
     sql = """UPDATE model_info SET classes = %s WHERE model_id=%s; 
-            INSERT INTO model_info (%s, %s)
-            SELECT %s, %s, %s
+            INSERT INTO model_info (model_name, model_id, imageset_name, classes)
+            SELECT %s, %s, %s, %s
             WHERE NOT EXISTS (SELECT 1 FROM model_info WHERE model_id=%s);"""
-    dir = msg['bucket_prefix'].split('/')
-    model_name = dir[-1]
+    params = (msg['classes'], 
+            msg['model_id'], 
+            msg['model_name'],
+            msg['model_id'],
+            msg['imageset_name'],
+            msg['classes'],
+            msg['model_id']
+            )
     
-    curs.execute(sql, (model_name, msg['imageset_name']))
-    model_id = curs.fetchone()[0]
+    curs.execute(sql, params)
     conn.commit()
     curs.close()
     conn.close()
-    return model_id
-
-def consume_update(model_info):
-    conn = psycopg2.connect(database='sherlockdb',
-                            user='postgres',
-                            host='localhost',
-                            port='1324',
-                            password='default')
-
-
-    
-    curs = conn.cursor()
-    classes = model_info['classes']
-    sql = """UPDATE model_info SET classes = %s;"""
-    curs.execute(sql, (json.dumps(classes),))
-    conn.commit()
-    curs.close()
-    conn.close()
+    return msg['model_id']
