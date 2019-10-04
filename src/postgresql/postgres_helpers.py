@@ -43,16 +43,17 @@ def label_calcs(labels):
 def stat_update(model_name, cls_count):
         conn = psycopg2.connect(database='sherlockdb', 
                                 user='postgres', 
-                                host='localhost', 
+                                host='ec2-34-220-127-34.us-west-2.compute.amazonaws.com', 
                                 port='1324', 
                                 password='default')
         curs = conn.cursor()
-        sql_table = """CREATE TABLE IF NOT EXISTS %s(
-                        label text,
-                        count integer,
-                        PRIMARY KEY label
-                        );"""
-        curs.execute(sql_table, (model_name,))
+        sql = psycopg2.sql
+        sql_table = sql.SQL("""CREATE TABLE IF NOT EXISTS {} (
+                label text, 
+                count integer, 
+                PRIMARY KEY label
+                );""").format(sql.Identifier('sherlockdb'))
+        curs.execute(sql_table)
         conn.commit()
         for label in cls_count:
                 sql_update = """UPDATE %s
