@@ -20,5 +20,5 @@ def sherlock_producer(bucket_name, imageset_name, bucket_prefix, job_type):
         'bucket_prefix': 'models/' + bucket_prefix,
         'job_type': job_type
         }
-    producer.send('test_consumer', data).get(timeout=30)
+    producer.send('ml_job', data).get(timeout=30)
     return data

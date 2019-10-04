@@ -30,5 +30,5 @@ def sherlock_consumer(topic, group_id):
     for message in consumer:
         print(message.value)
         request_info = message.value
-        api_request(request_info, 'localhost', '3031')
+        api_request(request_info, 'a168c3e42e58611e9bd0902fa9a9168f-87440796.us-west-2.elb.amazonaws.com', '8080')
     
