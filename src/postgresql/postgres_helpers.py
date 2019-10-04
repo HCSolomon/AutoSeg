@@ -43,7 +43,7 @@ def label_calcs(labels):
 def stat_update(model_name, cls_count):
         conn = psycopg2.connect(database='sherlockdb', 
                                 user='postgres', 
-                                host='ec2-34-220-127-34.us-west-2.compute.amazonaws.com', 
+                                host='localhost', 
                                 port='1324', 
                                 password='default')
         curs = conn.cursor()
@@ -52,7 +52,7 @@ def stat_update(model_name, cls_count):
                         count integer,
                         PRIMARY KEY label
                         );"""
-        curs.execute(sql_table, model_name)
+        curs.execute(sql_table, (model_name,))
         conn.commit()
         for label in cls_count:
                 sql_update = """UPDATE %s
