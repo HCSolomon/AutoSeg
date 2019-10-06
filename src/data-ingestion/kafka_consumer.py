@@ -12,17 +12,16 @@ KAFKA_PORT = '9092'
 def api_request(json_info, ip_address, port):
     url = 'http://' + ip_address + ":" + port + "/inceptionV3/" + json_info["job_type"]
     info_files = {
-        'train_bucket_name':  json_info['bucket_name'],
-        'train_bucket_prefix':  json_info['bucket_prefix'],
-        'model_id': json_info['model_id']
+        'bucket_name':  json_info['bucket_name'],
+        'bucket_prefix':  json_info['bucket_prefix'],
+        'model_name': json_info['model_name']
     }
-    print(json_info['model_id'])
     response = requests.post(url, data = info_files)
     return response
 
-def sherlock_consumer(topic, group_id):
-    consumer = KafkaConsumer(topic,
-                            group_id=group_id, 
+def sherlock_consumer():
+    consumer = KafkaConsumer('ml_job',
+                            group_id = 'watsondb', 
                             bootstrap_servers=[KAFKA_BROKER + ":" + KAFKA_PORT],
                             auto_offset_reset='earliest',
                             value_deserializer=lambda m: json.loads(m.decode('utf-8')))
@@ -30,5 +29,5 @@ def sherlock_consumer(topic, group_id):
     for message in consumer:
         print(message.value)
         request_info = message.value
-        api_request(request_info, 'a168c3e42e58611e9bd0902fa9a9168f-87440796.us-west-2.elb.amazonaws.com', '8080')
+        api_request(request_info, 'a545b6191e7c311e980d502a57ca1ca7-396068562.us-west-2.elb.amazonaws.com', '8080')
     
