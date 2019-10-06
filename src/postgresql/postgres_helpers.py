@@ -5,7 +5,7 @@ import uuid
 
 
 def consume_upsert(msg):
-        conn = psycopg2.connect(database='sherlockdb', 
+        conn = psycopg2.connect(database='watsondb', 
                                 user='postgres', 
                                 host='ec2-34-220-127-34.us-west-2.compute.amazonaws.com', 
                                 port='1324', 
@@ -42,7 +42,7 @@ def label_calcs(labels):
         return cls_count, sum_probs/prob_count
 
 def stat_update(model_name, cls_count):
-        conn = psycopg2.connect(database='sherlockdb', 
+        conn = psycopg2.connect(database='watsondb', 
                                 user='postgres', 
                                 host='localhost', 
                                 port='1324', 
