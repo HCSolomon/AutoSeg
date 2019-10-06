@@ -46,17 +46,6 @@ def stat_update(model_name, cls_count):
                                 port='1324', 
                                 password='default')
         curs = conn.cursor()
-<<<<<<< HEAD
-        sql = psycopg2.sql
-        sql_table = sql.SQL("""CREATE TABLE IF NOT EXISTS {} (
-                label text, 
-                count integer, 
-                PRIMARY KEY label
-                );""").format(sql.Identifier('sherlockdb'))
-        curs.execute(sql_table)
-        conn.commit()
-=======
->>>>>>> ab3d6e1b0a84923e211e8767bec95ec0c35b3de9
         for label in cls_count:
                 sql_update = """INSERT INTO label_count(model_name, label, count)
                                 VALUES(%s, %s, %s)
@@ -70,7 +59,6 @@ def stat_update(model_name, cls_count):
                         model_name,
                         label)
                 curs.execute(sql_update, params)
-                print(label)
                 conn.commit()
         curs.close()
         conn.close()
