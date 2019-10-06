@@ -53,6 +53,7 @@ def stat_update(model_name, cls_count):
                 count integer, 
                 PRIMARY KEY label
                 );""").format(sql.Identifier('sherlockdb'))
+        curs.execute(sql_table)
         conn.commit()
         for label in cls_count:
                 sql_update = """UPDATE %s

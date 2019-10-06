@@ -14,10 +14,9 @@ def sherlock_producer(bucket_name, imageset_name, bucket_prefix, job_type):
     producer = KafkaProducer(bootstrap_servers=[KAFKA_BROKER + ":" + KAFKA_PORT],
                         value_serializer=lambda m: json.dumps(m).encode('utf-8'))
     data = {
-        'bucket_name': bucket_name, 
-        'model_id': str(uuid.uuid1()),
+        'bucket_name': bucket_name,
         'imageset_name': imageset_name,
-        'bucket_prefix': 'models/' + bucket_prefix,
+        'bucket_prefix': bucket_prefix,
         'job_type': job_type
         }
     producer.send('ml_job', data).get(timeout=30)
