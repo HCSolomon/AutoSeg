@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import json
 import requests
 import flask
@@ -17,8 +19,10 @@ def transfer_consumer():
                             value_deserializer=lambda m: json.loads(m.decode('utf-8')))
 
     for message in consumer:
+        print("** Consuming transfer results **")
         msg = message.value
         postgres_helpers.consume_upsert(msg)
+        print("** Transfer results consumed **")
 
 def label_consumer():
     consumer = KafkaConsumer('pg_label',
@@ -28,6 +32,7 @@ def label_consumer():
                             value_deserializer=lambda m: json.loads(m.decode('utf-8')))
 
     for message in consumer:
+        print("** Consuming labels **")
         msg = message.value
         cls_count, avg_prob = postgres_helpers.label_calcs(msg['results'])
         postgres_helpers.stat_update(msg['model_name'], cls_count)
