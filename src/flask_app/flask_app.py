@@ -30,10 +30,7 @@ def homepage():
     for label in class_counts:
         pie_labels.append(label[0])
         pie_values.append(label[1])
-    return render_template('main.html', title='Class Composition of Current Dataset', max=17000, set=zip(values, labels, colors))    
+    return render_template('main.html', title='Class Composition of Current Dataset', max=17000, set=zip(pie_values, pie_labels, colors))    
 
 if __name__ == "__main__":
-    print("getting_counts")
-    print(get_counts('base'))
-    print("counts gotten")
     app.run(host='0.0.0.0')
