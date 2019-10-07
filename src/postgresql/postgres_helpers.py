@@ -63,6 +63,20 @@ def stat_update(model_name, cls_count):
         curs.close()
         conn.close()
 
+def get_counts(model_name):
+        conn = psycopg2.connect(database='watsondb', 
+                                user='postgres', 
+                                host='localhost', 
+                                port='1324', 
+                                password='default')
+        curs = conn.cursor()
+        sql = """SELECT label, count
+                FROM label_count
+                WHERE model_name = %s;"""
+        curs.execute(sql, (model_name,))
+        counts = curs.fetchall()
+        return counts
+
 def main():
         with open('samples/list_test.json') as f:
                 j = json.loads(f.read())
