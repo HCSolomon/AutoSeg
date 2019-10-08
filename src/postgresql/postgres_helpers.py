@@ -12,15 +12,19 @@ def consume_upsert(msg):
                                 password='default')
 
         curs = conn.cursor()
-        sql = """UPDATE model_info SET classes = %s WHERE model_name = %s; 
-                INSERT INTO model_info (model_name, imageset_name, classes)
-                SELECT %s, %s, %s
+        sql = """UPDATE model_info SET (classes, val_acc, train_acc) = (%s,%s,%s) WHERE model_name = %s; 
+                INSERT INTO model_info (model_name, imageset_name, classes, val_acc, train_acc)
+                SELECT %s, %s, %s, %s, %s
                 WHERE NOT EXISTS (SELECT 1 FROM model_info WHERE model_name = %s);"""
         params = (json.dumps(msg['classes']),
+                msg['val_acc'],
+                msg['train_acc'],
                 msg['model_name'],
                 msg['model_name'],
                 msg['imageset_name'],
                 json.dumps(msg['classes']),
+                msg['val_acc'],
+                msg['train_acc'],
                 msg['model_name']
                 )
         curs.execute(sql, params)
