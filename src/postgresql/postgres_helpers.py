@@ -81,12 +81,21 @@ def get_counts(model_name):
         counts = curs.fetchall()
         return counts
 
-def main():
-        with open('samples/list_test.json') as f:
-                j = json.loads(f.read())
+def get_latest():
+        conn = psycopg2.connect(database='watsondb', 
+                                user='postgres', 
+                                host='54.214.109.33', 
+                                port='1324', 
+                                password='default')
+        curs = conn.cursor()
+        sql = """SELECT * FROM model_info ORDER BY train_time DESC LIMIT 5;"""
+        curs.execute(sql)
+        latest = curs.fetchall()
+        return latest
 
-        cls_count, avg_prob = label_calcs(j)
-        stat_update('test', cls_count)
+def main():
+        msg = {'model_name': 'test-name', 'imageset_name': 'test-imageset', 'classes': {'0': 'class'}, 'val_acc': .6, 'train_acc': .5}
+        consume_upsert(msg)
 
 if __name__ == "__main__":
         main()
