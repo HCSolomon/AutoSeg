@@ -18,6 +18,7 @@
   <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
 
   <body>
+    <h1>{{ title }}</h1>
     <div class="dropdown">
       <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Select Model
@@ -29,50 +30,8 @@
         <a class="dropdown-item" href="etc">etc</a>
       </div>
     </div>
-
-    <h2>Accuracy of Latest Trained Models</h2>
-    <div id="barChart" style="float:left">
-      <canvas id="chart2" width="600" height="400"></canvas>
-    </div>
-
-    <h2>{{ title }}</h2>
-    <div id="pieChart">
-      <canvas id="chart" width="600" height="400"></canvas>
-    </div>
-
+    <canvas id="chart" width="600" height="400"></canvas>
     <script>
-      var pieData = [
-        {% for item, label, colors in set %}
-          {
-            value: {{item}},
-            label: "{{label}}",
-            color : "{{colors}}"
-          },
-        {% endfor %}
-      ];
-      // get bar chart canvas
-      var mychart = document.getElementById("chart").getContext("2d");
-      steps = 10
-      max = {{ piemax }}
-      // draw pie chart
-      new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData);
-
-      function filterFunction() {
-        var input, filter, ul, li, a, i;
-        input = document.getElementById("myInput");
-        filter = input.value.toUpperCase();
-        div = document.getElementById("myDropdown");
-        a = div.getElementsByTagName("a");
-        for (i = 0; i < a.length; i++) {
-          txtValue = a[i].textContent || a[i].innerText;
-          if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            a[i].style.display = "";
-          } else {
-            a[i].style.display = "none";
-          }
-        }
-      }
-
       // bar chart data
       var barData = {
         labels : [
@@ -93,9 +52,9 @@
         ]
       }
       // get bar chart canvas
-      var mychart = document.getElementById("chart2").getContext("2d");
+      var mychart = document.getElementById("chart").getContext("2d");
         steps = 10
-        max = {{barmax}}
+        max = {{max}}
       // draw bar chart
       new Chart(mychart).Bar(barData, {
         scaleOverride: true,

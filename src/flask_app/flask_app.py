@@ -1,7 +1,7 @@
 from flask import Flask, Markup, render_template
 import sys
 sys.path.append('/home/ubuntu/Watson')
-from src.postgresql.postgres_helpers import get_counts
+from src.postgresql.postgres_helpers import get_counts, get_latest
 
 app = Flask(__name__)
 
@@ -24,13 +24,29 @@ colors = [
 
 @app.route('/')
 def homepage():
-    class_counts = get_counts('base')
+    models = get_latest()
+    model_labels = []
+    model_accs = []
+    for model in models:
+        model_labels.append(model[0])
+        model_accs.append(model[4] * 100)
+    return render_template('bar_chart.html', title='Accuracies of Latest Trained Models', max=100, values=model_accs, labels=model_labels)
+
+@app.route('/<model_name>')
+def label_stats(model_name):
+    class_counts = get_counts(model_name)
     pie_labels = []
     pie_values = []
     for label in class_counts:
         pie_labels.append(label[0])
         pie_values.append(label[1])
-    return render_template('main.html', title='Class Composition of Current Dataset', max=17000, set=zip(pie_values, pie_labels, colors))    
+    models = get_latest()
+    model_labels = []
+    model_accs = []
+    for model in models:
+        model_labels.append(model[0])
+        model_accs.append(model[4] * 100)
+    return render_template('main.html', title='Class Composition of '+model_name, piemax=17000, barmax=100, set=zip(pie_values, pie_labels, colors), values=model_accs, labels=model_labels)    
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
