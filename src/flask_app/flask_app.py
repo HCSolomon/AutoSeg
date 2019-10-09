@@ -30,7 +30,7 @@ def homepage():
     for model in models:
         model_labels.append(model[0])
         model_accs.append(model[4] * 100)
-    return render_template('bar_chart.html', title='Accuracies of Latest Trained Models', max=100, values=model_accs, labels=model_labels)
+    return render_template('main.html', title='Accuracies of Latest Trained Models', max=100, values=model_accs, labels=model_labels)
 
 @app.route('/<model_name>')
 def label_stats(model_name):

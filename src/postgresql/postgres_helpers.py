@@ -70,7 +70,7 @@ def stat_update(model_name, cls_count):
 def get_counts(model_name):
         conn = psycopg2.connect(database='watsondb', 
                                 user='postgres', 
-                                host='54.214.109.33', 
+                                host='10.0.0.13', 
                                 port='1324', 
                                 password='default')
         curs = conn.cursor()
@@ -84,7 +84,7 @@ def get_counts(model_name):
 def get_latest():
         conn = psycopg2.connect(database='watsondb', 
                                 user='postgres', 
-                                host='54.214.109.33', 
+                                host='10.0.0.13', 
                                 port='1324', 
                                 password='default')
         curs = conn.cursor()
