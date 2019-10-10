@@ -43,7 +43,7 @@ def label_calcs(labels):
         
         return cls_count, sum_probs/prob_count
 
-def stat_update(model_name, cls_count):
+def stat_update(model_name, imageset_name, cls_count):
         conn = psycopg2.connect(database='watsondb', 
                                 user='postgres', 
                                 host='localhost', 
@@ -51,23 +51,25 @@ def stat_update(model_name, cls_count):
                                 password='default')
         curs = conn.cursor()
         for label in cls_count:
-                sql_update = """INSERT INTO label_count(model_name, label, count)
-                                VALUES(%s, %s, %s)
-                                ON CONFLICT (model_name, label) DO UPDATE
+                sql_update = """INSERT INTO label_count(model_name, label, count, imageset_name)
+                                VALUES(%s, %s, %s %s)
+                                ON CONFLICT (model_name, label, imageset_name) DO UPDATE
                                 SET count = label_count.count + %s 
-                                WHERE (label_count.model_name, label_count.label)= (%s, %s);"""
+                                WHERE (label_count.model_name, label_count.label, imageset_name)= (%s, %s, %s);"""
                 params = (model_name,
                         label,
                         cls_count[label],
+                        imageset_name,
                         cls_count[label],
                         model_name,
-                        label)
+                        label,
+                        imageset_name)
                 curs.execute(sql_update, params)
                 conn.commit()
         curs.close()
         conn.close()
 
-def get_counts(model_name):
+def get_counts(model_name, imageset_name):
         conn = psycopg2.connect(database='watsondb', 
                                 user='postgres', 
                                 host='10.0.0.13', 
@@ -76,8 +78,8 @@ def get_counts(model_name):
         curs = conn.cursor()
         sql = """SELECT label, count
                 FROM label_count
-                WHERE model_name = %s;"""
-        curs.execute(sql, (model_name,))
+                WHERE model_name, imageset_name = %s, %s;"""
+        curs.execute(sql, (model_name, imageset_name))
         counts = curs.fetchall()
         return counts
 
