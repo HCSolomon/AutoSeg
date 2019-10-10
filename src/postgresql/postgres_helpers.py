@@ -52,10 +52,10 @@ def stat_update(model_name, imageset_name, cls_count):
         curs = conn.cursor()
         for label in cls_count:
                 sql_update = """INSERT INTO label_count(model_name, label, count, imageset_name)
-                                VALUES(%s, %s, %s %s)
+                                VALUES(%s, %s, %s, %s)
                                 ON CONFLICT (model_name, label, imageset_name) DO UPDATE
                                 SET count = label_count.count + %s 
-                                WHERE (label_count.model_name, label_count.label, imageset_name)= (%s, %s, %s);"""
+                                WHERE (label_count.model_name, label_count.label, label_count.imageset_name)= (%s, %s, %s);"""
                 params = (model_name,
                         label,
                         cls_count[label],
