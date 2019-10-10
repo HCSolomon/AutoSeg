@@ -78,7 +78,7 @@ def get_counts(model_name, imageset_name):
         curs = conn.cursor()
         sql = """SELECT label, count
                 FROM label_count
-                WHERE model_name, imageset_name = %s, %s;"""
+                WHERE (model_name, imageset_name) = (%s, %s);"""
         curs.execute(sql, (model_name, imageset_name))
         counts = curs.fetchall()
         return counts
