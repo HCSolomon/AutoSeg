@@ -6,6 +6,7 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
 
     <title>Watson</title>
   </head>
@@ -16,6 +17,8 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -26,19 +29,26 @@
 
     <div class="container">
       <div class="row mt-5">
-        <div class="col-md text-center">
-          <div class="dropdown" style="float:left">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              Select Model
-            </button>
-            <div id="myDropdown" class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-              <input type="text" placeholder="Search..." id="myInput" onkeyup="filterFunction()">
-              <a class="dropdown-item" href="base">base</a>
-              <a class="dropdown-item" href="test-model">test-model</a>
-              <a class="dropdown-item" href="etc">etc</a>
-            </div>
-          </div>
-        </div>
+        <form id="my-form" method="post">
+
+          <select name="model-list" id="model-list" multiple="multiple" size="10">
+              <option value="No Model Selected">Select Model</option>
+              <option value="base">base</option>
+              <option value="Demo">Demo</option>
+              <option value="Demo1">Demo1</option>
+          </select>
+          
+          <select name="imageset-list" id="imageset-list" multiple="multiple" size="10">
+              <option value="No Image Set Selected">Select Image Set</option>
+              <option value="open-images">open-images</option>
+              <option value="Demo">Demo</option>
+              <option value="Demo1">Demo1</option>
+          </select>
+
+          <!-- use this for server-side processing -->
+          <input type="submit"/>
+        </form>
+        
 
         <div class="col-md text-center">
           <h2 class="text-center">Accuracy of Latest Trained Models</h2>
@@ -120,6 +130,13 @@
         scaleShowLabels: true
         }
       );
+      
+      function clicked() {
+        var model = document.getElementById("model-list").value;
+        var imageset = document.getElementById("imageset-list").value;
+        alert(model+imageset);
+      }
+      
     </script>
   </body>
 </html>
