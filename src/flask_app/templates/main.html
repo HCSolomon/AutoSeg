@@ -29,20 +29,18 @@
 
     <div class="container">
       <div class="row mt-5">
-        <form id="my-form" method="post">
+        <form id="my-form" method="POST">
 
           <select name="model-list" id="model-list" multiple="multiple" size="10">
               <option value="No Model Selected">Select Model</option>
               <option value="base">base</option>
-              <option value="Demo">Demo</option>
-              <option value="Demo1">Demo1</option>
           </select>
           
           <select name="imageset-list" id="imageset-list" multiple="multiple" size="10">
               <option value="No Image Set Selected">Select Image Set</option>
               <option value="open-images">open-images</option>
               <option value="Demo">Demo</option>
-              <option value="Demo1">Demo1</option>
+              <option value="Demo2">Demo2</option>
           </select>
 
           <!-- use this for server-side processing -->
@@ -79,22 +77,6 @@
       // draw pie chart
       new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData);
 
-      function filterFunction() {
-        var input, filter, ul, li, a, i;
-        input = document.getElementById("myInput");
-        filter = input.value.toUpperCase();
-        div = document.getElementById("myDropdown");
-        a = div.getElementsByTagName("a");
-        for (i = 0; i < a.length; i++) {
-          txtValue = a[i].textContent || a[i].innerText;
-          if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            a[i].style.display = "";
-          } else {
-            a[i].style.display = "none";
-          }
-        }
-      }
-
       // bar chart data
       var barData = {
         labels : [
@@ -130,12 +112,6 @@
         scaleShowLabels: true
         }
       );
-      
-      function clicked() {
-        var model = document.getElementById("model-list").value;
-        var imageset = document.getElementById("imageset-list").value;
-        alert(model+imageset);
-      }
       
     </script>
   </body>
