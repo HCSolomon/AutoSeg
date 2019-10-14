@@ -127,7 +127,14 @@ def get_models_and_labels():
         sql = """SELECT imageset_name FROM model_info;"""
         curs.execute(sql)
         imagesets = curs.fetchall()
-        return models, imagesets
+        model_names = []
+        imageset_names = []
+        for name in models:
+                model_names.append(name[0])
+        for name in imagesets:
+                imageset_names.append(name[0])
+
+        return model_names, imageset_names
 
 def main():
         msg = {'model_name': 'test-name', 'imageset_name': 'test-imageset', 'classes': {'0': 'class'}, 'val_acc': .6, 'train_acc': .5}
