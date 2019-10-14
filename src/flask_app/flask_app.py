@@ -2,7 +2,7 @@ from flask import Flask, Markup, render_template, request
 import random
 import sys
 sys.path.append('/home/ubuntu/Watson')
-from src.postgresql.postgres_helpers import get_counts, get_latest
+from src.postgresql.postgres_helpers import get_counts, get_latest, get_models_and_labels
 
 app = Flask(__name__)
 
@@ -11,6 +11,7 @@ def homepage():
     models = get_latest()
     model_labels = []
     model_accs = []
+    model_names, imageset_names = get_models_and_labels()
     for mdl in models:
         model_labels.append(mdl[0])
         model_accs.append(mdl[4] * 100)
@@ -25,7 +26,8 @@ def homepage():
                             barmax=100, 
                             set=zip(pie_values, pie_labels, colors), 
                             values=model_accs, 
-                            labels=model_labels)
+                            labels=model_labels,
+                            imagesets=imageset_names)
 
 @app.route('/', methods=['POST'])
 def stats():
@@ -51,12 +53,15 @@ def stats():
             r = lambda: random.randint(0,255)
             colors.append('#%02X%02X%02X' % (r(),r(),r()))
 
+        model_names, imageset_names = get_models_and_labels()
+
         return render_template('main.html', title='Class Composition of ' + model, 
                                 piemax=17000, 
                                 barmax=100, 
                                 set=zip(pie_values, pie_labels, colors), 
                                 values=model_accs, 
-                                labels=model_labels)
+                                labels=model_labels,
+                                imagesets=imageset_names)
     else:
         return("Temporarily Down")
 

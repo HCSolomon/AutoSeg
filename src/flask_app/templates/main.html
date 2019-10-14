@@ -37,10 +37,6 @@
           
           <select name="imageset-list" id="imageset-list" multiple="multiple" size="10">
               <option value="No Image Set Selected">Select Image Set</option>
-              <option value="open-images">open-images</option>
-              <option value="demo-flowers-label">demo-flowers-label</option>
-              <option value="Demo">Demo</option>
-              <option value="Demo2">Demo2</option>
           </select>
 
           <!-- use this for server-side processing -->
@@ -73,6 +69,21 @@
         var opt = document.createElement('option');
         opt.value = availableLabels[i];
         opt.text = availableLabels[i];
+        select.appendChild(opt);
+      }
+
+      var availableImagesets = [
+        {% for name in imagesets %}
+          "{{name}}",
+        {% endfor %}
+      ];
+
+      var select = document.getElementById('imageset-list');
+
+      for (var i = 0; i < availableImagesets.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = availableImagesets[i];
+        opt.text = availableImagesets[i];
         select.appendChild(opt);
       }
       
