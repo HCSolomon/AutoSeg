@@ -34,16 +34,33 @@ def consume_upsert(msg):
 
 def label_calcs(labels):
         cls_count = {}
+        conf_scores = {}
         sum_probs = 0
-        prob_count = 0
-        for item in labels:
-                cls_count[item[0]['label']] = cls_count.get(item[0]['label'], 0) + 1
-                sum_probs += item[0]['prob']
-                prob_count += 1
+        for label in labels:
+                cls_count[label[0]['label']] = cls_count.get(label[0]['label'], 0) + 1
+                conf_scores[label[0]['label']] = conf_scores.get(label[0]['label'], 0) + label[0]['prob']
+                sum_probs += label[0]['prob']
+        for label in conf_scores:
+                conf_scores[label] = conf_scores[label]/cls_count[label]
         
-        return cls_count, sum_probs/prob_count
+        return cls_count, sum_probs/len(labels), conf_scores
 
-def stat_update(model_name, imageset_name, cls_count):
+def add_confidence(model_name, avg_prob):
+        conn = psycopg2.connect(database='watsondb', 
+                                user='postgres', 
+                                host='localhost', 
+                                port='1324', 
+                                password='default')
+        curs = conn.cursor()
+        sql = """UPDATE model_info SET avg_prob = %s WHERE model_name = %s;"""
+        params = (avg_prob, model_name)
+        curs.execute(sql, params)
+        conn.commit()
+        curs.close()
+        conn.close()
+
+
+def stat_update(model_name, imageset_name, cls_count, conf_scores):
         conn = psycopg2.connect(database='watsondb', 
                                 user='postgres', 
                                 host='localhost', 
@@ -51,16 +68,18 @@ def stat_update(model_name, imageset_name, cls_count):
                                 password='default')
         curs = conn.cursor()
         for label in cls_count:
-                sql_update = """INSERT INTO label_count(model_name, label, count, imageset_name)
-                                VALUES(%s, %s, %s, %s)
+                sql_update = """INSERT INTO label_count(model_name, label, count, imageset_name, confidence_score)
+                                VALUES(%s, %s, %s, %s, %s)
                                 ON CONFLICT (model_name, label, imageset_name) DO UPDATE
-                                SET count = label_count.count + %s 
+                                SET (count,confidence_score) = (label_count.count + %s, %s) 
                                 WHERE (label_count.model_name, label_count.label, label_count.imageset_name)= (%s, %s, %s);"""
                 params = (model_name,
                         label,
                         cls_count[label],
                         imageset_name,
+                        conf_scores[label],
                         cls_count[label],
+                        conf_scores[label],
                         model_name,
                         label,
                         imageset_name)
@@ -94,6 +113,21 @@ def get_latest():
         curs.execute(sql)
         latest = curs.fetchall()
         return latest
+
+def get_models_and_labels():
+        conn = psycopg2.connect(database='watsondb', 
+                                user='postgres', 
+                                host='10.0.0.13', 
+                                port='1324', 
+                                password='default')
+        curs = conn.cursor()
+        sql = """SELECT model_name FROM model_info;"""
+        curs.execute(sql)
+        models = curs.fetchall()
+        sql = """SELECT imageset_name FROM model_info;"""
+        curs.execute(sql)
+        imagesets = curs.fetchall()
+        return models, imagesets
 
 def main():
         msg = {'model_name': 'test-name', 'imageset_name': 'test-imageset', 'classes': {'0': 'class'}, 'val_acc': .6, 'train_acc': .5}

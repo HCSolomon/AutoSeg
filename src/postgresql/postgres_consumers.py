@@ -34,8 +34,9 @@ def label_consumer():
     for message in consumer:
         print("** Consuming labels **")
         msg = message.value
-        cls_count, avg_prob = postgres_helpers.label_calcs(msg['results'])
-        postgres_helpers.stat_update(msg['model_name'], msg['imageset_name'], cls_count)
+        cls_count, avg_prob, conf_scores = postgres_helpers.label_calcs(msg['results'])
+        postgres_helpers.stat_update(msg['model_name'], msg['imageset_name'], cls_count, conf_scores)
+        postgres_helpers.add_confidence(msg['model_name'], avg_prob)
         print("** Labels consumed **")
 
 def main():
