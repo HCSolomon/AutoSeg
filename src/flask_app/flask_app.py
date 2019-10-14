@@ -14,8 +14,8 @@ def homepage():
     for mdl in models:
         model_labels.append(mdl[0])
         model_accs.append(mdl[4] * 100)
-    pie_labels = ['1','2','3','4']
-    pie_values = [123,234,3445,1233]
+    pie_labels = []
+    pie_values = []
     colors = []
     for i in range(20):
         r = lambda: random.randint(0,255)

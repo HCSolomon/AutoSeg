@@ -33,18 +33,18 @@
 
           <select name="model-list" id="model-list" multiple="multiple" size="10">
               <option value="No Model Selected">Select Model</option>
-              <option value="base">base</option>
           </select>
           
           <select name="imageset-list" id="imageset-list" multiple="multiple" size="10">
               <option value="No Image Set Selected">Select Image Set</option>
               <option value="open-images">open-images</option>
+              <option value="demo-flowers-label">demo-flowers-label</option>
               <option value="Demo">Demo</option>
               <option value="Demo2">Demo2</option>
           </select>
 
           <!-- use this for server-side processing -->
-          <input type="submit"/>
+          <input type="submit" onclick="repopulateSelect()"/>
         </form>
         
 
@@ -61,6 +61,21 @@
     </div>
 
     <script>
+      var availableLabels = [
+        {% for label in labels %}
+          "{{label}}",
+        {% endfor %}
+      ];
+      
+      var select = document.getElementById('model-list');
+
+      for (var i = 0; i < availableLabels.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = availableLabels[i];
+        opt.text = availableLabels[i];
+        select.appendChild(opt);
+      }
+      
       var pieData = [
         {% for item, label, colors in set %}
           {
@@ -111,8 +126,7 @@
         barShowStroke : true,
         scaleShowLabels: true
         }
-      );
-      
+      );      
     </script>
   </body>
 </html>
