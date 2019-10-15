@@ -107,6 +107,21 @@ def get_counts(model_name, imageset_name):
         confs = curs.fetchall()
         return counts, confs
 
+def get_averages(model_name):
+        conn = psycopg2.connect(database='watsondb', 
+                                user='postgres', 
+                                host='10.0.0.13', 
+                                port='1324', 
+                                password='default')
+        curs = conn.cursor()
+        sql = """SELECT imageset_name, AVG(confidence_score) AS conf
+                FROM label_count
+                WHERE model_name = %s
+                GROUP BY imageset_name;"""
+        curs.execute(sql, (model_name,))
+        averages = curs.fetchall()
+        return averages
+
 def get_latest():
         conn = psycopg2.connect(database='watsondb', 
                                 user='postgres', 
