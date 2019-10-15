@@ -1,12 +1,12 @@
 # Watson
-Building a Productionalized Machine Learning Platform. This Insight project utilizes Sherlock for transfer learning and scales the this machine learning project to serve many jobs at once while maintaining important information about the models and datasets used.
+Building a Productionalized Machine Learning Platform. This Insight project utilizes Sherlock for transfer learning and scales the it to serve many jobs at once while maintaining important information about the models and datasets used in order to assist Machine Learning Engineers determine the best course of action to take regarding their ML model and training datasets.
 
 ## Tech Stack
 
 ### Flask
 UI
 
-### Cassandra
+### PostgreSQL
 Database containing information on models and datasets
 
 ### S3
@@ -18,16 +18,16 @@ Deploy Sherlock Docker containers
 ### Kafka
 Broker messages between different processes
 
-### Spark
-Sink model and dataset information into Cassandra
-
 ## Data Source
 
 OpenImages (https://storage.googleapis.com/openimages/web/download.html, 500GB)
 
 ## Engineering Challenge
 
-Large-scale image classification itself is tasking due to the need to preprocess images before being used for training and validating. The scale becomes even larger when segmenting images into masks. Such processing on a single machine for an entire dataset takes a lot of time and there is too much room for failure within these periods. But by scaling out computations, I will have to determine ways to make the process fault-tolerant.
+Processing images on the Sherlock machine learning platform poses throughput and latency issues. Image datasets by nature are very dense and images take
+long periods of time to process. Being unable to facilitate the distribution of machine learning jobs will lead to very high latency for this reason. This
+is made even more challenging by the need to save image sets locally to perform ML jobs. It will be necessary to track jobs that have and have not been
+completed and ensure that all messages are completed in a way that distributes the work in an efficient manner across the Sherlock nodes.
 
 ## Business Value
 
@@ -35,4 +35,5 @@ Computer vision is an increasingly popular subject in health science, manufactur
 
 ## MVP
 
-Compile an image dataset of categorized segment masks from a large dataset of unsegmented images using a pipeline which runs a pretrained ML model.
+Produce a demonstration of the inference results and how they can benefit a machine learning engineer trying to determine how to improve their next 
+dataset.

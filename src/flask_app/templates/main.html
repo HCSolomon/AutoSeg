@@ -29,29 +29,38 @@
 
     <div class="container">
       <div class="row mt-5">
-        <form id="my-form" method="POST">
+        <div class="col-md text-center">
+          <h3 class="text-center">Select Model and Image Set</h3>
+          <form id="my-form" method="POST">
+            <select name="model-list" id="model-list" multiple="multiple" size="10">
+                <option value="No Model Selected">* Models *</option>
+                <option value="base">InceptionV3</option>
+            </select>
+            
+            <select name="imageset-list" id="imageset-list" multiple="multiple" size="10">
+                <option value="No Image Set Selected">* Image Sets *</option>
+            </select>
 
-          <select name="model-list" id="model-list" multiple="multiple" size="10">
-              <option value="No Model Selected">Select Model</option>
-          </select>
-          
-          <select name="imageset-list" id="imageset-list" multiple="multiple" size="10">
-              <option value="No Image Set Selected">Select Image Set</option>
-          </select>
-
-          <!-- use this for server-side processing -->
-          <input type="submit" onclick="repopulateSelect()"/>
-        </form>
-        
+            <!-- use this for server-side processing -->
+            <input type="submit" onclick="repopulateSelect()"/>
+          </form>
+        </div>
 
         <div class="col-md text-center">
-          <h2 class="text-center">Accuracy of Latest Trained Models</h2>
+          <h3 class="text-center">Accuracy of Latest Trained Models</h3>
           <canvas id="chart2" height="400"></canvas>
         </div>
 
         <div class="col-md text-center">
-          <h2 class="text-center">{{ title }}</h2>
+          <h3 class="text-center">Class Composition of {{ title }}</h3>
           <canvas id="chart" height="400"></canvas>
+        </div>
+      </div>
+
+      <h3 class="text-center">Confidence Scores of Each Label in {{ title }}</h3>
+      <div class="row mt-5 mb-5">
+        <div class="col-md text-center overflow-auto">
+          <canvas id="chart3" height="400"></canvas>
         </div>
       </div>
     </div>
@@ -135,9 +144,48 @@
         scaleShowVerticalLines: true,
         scaleShowGridLines : true,
         barShowStroke : true,
+        scaleShowLabels: true,
+        }
+      ); 
+
+      // bar chart data
+      var barData2 = {
+        labels : [
+          {% for item in conf_labels %}
+            "{{ item }}",
+          {% endfor %}
+        ],
+        datasets : [{
+          fillColor: "rgba(151,187,205,0.2)",
+          strokeColor: "rgba(151,187,205,1)",
+          pointColor: "rgba(151,187,205,1)",
+          data : [
+            {% for item in conf_values %}
+                "{{ item }}",
+              {% endfor %}
+          ]
+        }
+        ]
+      }
+
+      var canv = document.getElementById('chart3');
+      canv.width = barData2['labels'].length * 50;
+
+      var mychart = document.getElementById("chart3").getContext("2d");
+        steps = 10
+        max = {{barmax}}
+      // draw bar chart
+      new Chart(mychart).Bar(barData2, {
+        scaleOverride: true,
+        scaleSteps: steps,
+        scaleStepWidth: Math.ceil(max / steps),
+        scaleStartValue: 0,
+        scaleShowVerticalLines: true,
+        scaleShowGridLines : true,
+        barShowStroke : true,
         scaleShowLabels: true
         }
-      );      
+      );       
     </script>
   </body>
 </html>
