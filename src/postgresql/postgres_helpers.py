@@ -124,7 +124,7 @@ def get_models_and_labels():
         sql = """SELECT model_name FROM model_info;"""
         curs.execute(sql)
         models = curs.fetchall()
-        sql = """SELECT imageset_name FROM label_count;"""
+        sql = """SELECT DISTINCT imageset_name FROM label_count;"""
         curs.execute(sql)
         imagesets = curs.fetchall()
         model_names = []
