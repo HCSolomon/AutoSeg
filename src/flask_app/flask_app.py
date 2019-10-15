@@ -1,7 +1,7 @@
 from flask import Flask, Markup, render_template, request
 import random
 import sys
-sys.path.append('/home/ubuntu/Watson')
+sys.path.append('./../..')
 from src.postgresql.postgres_helpers import get_counts, get_latest, get_models_and_labels
 
 app = Flask(__name__)
