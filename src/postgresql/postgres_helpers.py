@@ -100,7 +100,12 @@ def get_counts(model_name, imageset_name):
                 WHERE (model_name, imageset_name) = (%s, %s);"""
         curs.execute(sql, (model_name, imageset_name))
         counts = curs.fetchall()
-        return counts
+        sql = """SELECT label, confidence_score
+                FROM label_count
+                WHERE (model_name, imageset_name) = (%s, %s);"""
+        curs.execute(sql, (model_name, imageset_name))
+        confs = curs.fetchall()
+        return counts, confs
 
 def get_latest():
         conn = psycopg2.connect(database='watsondb', 
