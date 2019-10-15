@@ -34,7 +34,7 @@ def stats():
     if request.method == 'POST':
         model = request.form['model-list']
         images = request.form['imageset-list']
-        class_counts = get_counts(model, images)
+        class_counts, confidence_scores = get_counts(model, images)
         pie_labels = []
         pie_values = []
         colors = []
@@ -42,6 +42,12 @@ def stats():
             pie_labels.append(label[0])
             pie_values.append(label[1])
 
+        confidence_labels = []
+        confidence_values = []
+        for label in confidence_scores:
+            confidence_labels.append(label[0])
+            confidence_values.append(float(label[1]) * 100)
+            
         models = get_latest()
         model_labels = []
         model_accs = []
@@ -55,13 +61,15 @@ def stats():
 
         model_names, imageset_names = get_models_and_labels()
 
-        return render_template('main.html', title='Class Composition of ' + model, 
+        return render_template('main.html', title=images, 
                                 piemax=17000, 
                                 barmax=100, 
                                 set=zip(pie_values, pie_labels, colors), 
                                 values=model_accs, 
                                 labels=model_labels,
-                                imagesets=imageset_names)
+                                imagesets=imageset_names,
+                                conf_labels=confidence_labels,
+                                conf_values=confidence_values)
     else:
         return("Temporarily Down")
 
