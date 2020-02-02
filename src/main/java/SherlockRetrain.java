@@ -14,7 +14,7 @@ public class SherlockRetrain extends SherlockBase {
 
     public void retrain() {
         try {
-            URL url = new URL(getDataPrep().getKubernetesAPI().getLink());
+            URL url = new URL(getDataPrep().getKubernetesAPI().getLink(), "inceptionv3", "retrain");
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("epochs", "5");
