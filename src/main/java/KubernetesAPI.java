@@ -7,8 +7,19 @@ import io.kubernetes.client.models.V1NodeList;
 import io.kubernetes.client.util.Config;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 
 public class KubernetesAPI {
+    private final String link;
+
+    public KubernetesAPI(String platform_ip, String port) {
+        this.link = Paths.get("http:/", platform_ip, ":", port).toString();
+    }
+
+    public String getLink() {
+        return link;
+    }
+
     public long getPodCapacity() throws IOException, ApiException {
         Long storage = 0l;
 
@@ -39,7 +50,7 @@ public class KubernetesAPI {
         return storage;
     }
     public static void main(String[] args) throws IOException, ApiException {
-        KubernetesAPI newkubs = new KubernetesAPI();
-        System.out.println(newkubs.getPodCapacity());
+        KubernetesAPI new_kubes = new KubernetesAPI("localhost", "8080");
+        System.out.println(new_kubes.getPodCapacity());
     }
 }
