@@ -1,0 +1,19 @@
+** Running PostgreSQL consumers **
+** Running PostgreSQL consumers **
+** Running PostgreSQL consumers **
+** Running PostgreSQL consumers **
+** Running PostgreSQL consumers **
+** Running PostgreSQL consumers **
+** Running PostgreSQL consumers **
+** Running PostgreSQL consumers **
+** Running PostgreSQL consumers **
+** Running PostgreSQL consumers **
+  File "/home/ubuntu/Watson/src/postgresql/postgres_consumers.py", line 38
+    postgres_helpers.stat_update(msg['model_name'], msg['imageset_name'] cls_count)
+                                                                                 ^
+SyntaxError: invalid syntax
+** Running PostgreSQL consumers **
+** Running PostgreSQL consumers **
+** Running PostgreSQL consumers **
+** Running PostgreSQL consumers **
+** Running PostgreSQL consumers **

@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet"/>
+
+    <title>Watson</title>
+  </head>
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js'></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="#">Watson: Productionalizing a Machine Learning Platform</a>
+      </div>
+    </nav>
+
+    <div class="container">
+      <div class="row mt-5">
+        <div class="col-md text-center">
+          <h3 class="text-center">Select Model and Image Set</h3>
+          <form id="my-form" method="POST">
+            <select name="model-list" id="model-list" multiple="multiple" size="10">
+                <option value="No Model Selected">* Models *</option>
+                <option value="base">InceptionV3</option>
+            </select>
+            
+            <select name="imageset-list" id="imageset-list" multiple="multiple" size="10">
+                <option value="No Image Set Selected">* Image Sets *</option>
+            </select>
+
+            <!-- use this for server-side processing -->
+            <input type="submit" onclick="repopulateSelect()"/>
+          </form>
+        </div>
+
+        <div class="col-md text-center">
+          <h3 class="text-center">Accuracy of Latest Trained Models</h3>
+          <canvas id="chart2" height="400"></canvas>
+        </div>
+
+        <div class="col-md text-center">
+          <h3 class="text-center">Class Composition of {{ title }}</h3>
+          <canvas id="chart" height="400"></canvas>
+        </div>
+      </div>
+
+      <h3 class="text-center">Confidence Scores of Each Label in {{ title }}</h3>
+      <div class="row mt-5 mb-5">
+        <div class="col-md text-center overflow-auto">
+          <canvas id="chart3" height="400"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      var availableLabels = [
+        {% for label in labels %}
+          "{{label}}",
+        {% endfor %}
+      ];
+      
+      var select = document.getElementById('model-list');
+
+      for (var i = 0; i < availableLabels.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = availableLabels[i];
+        opt.text = availableLabels[i];
+        select.appendChild(opt);
+      }
+
+      var availableImagesets = [
+        {% for name in imagesets %}
+          "{{name}}",
+        {% endfor %}
+      ];
+
+      var select = document.getElementById('imageset-list');
+
+      for (var i = 0; i < availableImagesets.length; i++) {
+        var opt = document.createElement('option');
+        opt.value = availableImagesets[i];
+        opt.text = availableImagesets[i];
+        select.appendChild(opt);
+      }
+      
+      var pieData = [
+        {% for item, label, colors in set %}
+          {
+            value: {{item}},
+            label: "{{label}}",
+            color : "{{colors}}"
+          },
+        {% endfor %}
+      ];
+      // get bar chart canvas
+      var mychart = document.getElementById("chart").getContext("2d");
+      steps = 10
+      max = {{ piemax }}
+      // draw pie chart
+      new Chart(document.getElementById("chart").getContext("2d")).Pie(pieData);
+
+      // bar chart data
+      var barData = {
+        labels : [
+          {% for item in labels %}
+            "{{ item }}",
+          {% endfor %}
+        ],
+        datasets : [{
+          fillColor: "rgba(151,187,205,0.2)",
+          strokeColor: "rgba(151,187,205,1)",
+          pointColor: "rgba(151,187,205,1)",
+          data : [
+            {% for item in values %}
+                "{{ item }}",
+              {% endfor %}
+          ]
+        }
+        ]
+      }
+      // get bar chart canvas
+      var mychart = document.getElementById("chart2").getContext("2d");
+        steps = 10
+        max = {{barmax}}
+      // draw bar chart
+      new Chart(mychart).Bar(barData, {
+        scaleOverride: true,
+        scaleSteps: steps,
+        scaleStepWidth: Math.ceil(max / steps),
+        scaleStartValue: 0,
+        scaleShowVerticalLines: true,
+        scaleShowGridLines : true,
+        barShowStroke : true,
+        scaleShowLabels: true,
+        }
+      ); 
+
+      // bar chart data
+      var barData2 = {
+        labels : [
+          {% for item in conf_labels %}
+            "{{ item }}",
+          {% endfor %}
+        ],
+        datasets : [{
+          fillColor: "rgba(151,187,205,0.2)",
+          strokeColor: "rgba(151,187,205,1)",
+          pointColor: "rgba(151,187,205,1)",
+          data : [
+            {% for item in conf_values %}
+                "{{ item }}",
+              {% endfor %}
+          ]
+        }
+        ]
+      }
+
+      var canv = document.getElementById('chart3');
+      canv.width = barData2['labels'].length * 50;
+
+      var mychart = document.getElementById("chart3").getContext("2d");
+        steps = 10
+        max = {{barmax}}
+      // draw bar chart
+      new Chart(mychart).Bar(barData2, {
+        scaleOverride: true,
+        scaleSteps: steps,
+        scaleStepWidth: Math.ceil(max / steps),
+        scaleStartValue: 0,
+        scaleShowVerticalLines: true,
+        scaleShowGridLines : true,
+        barShowStroke : true,
+        scaleShowLabels: true
+        }
+      );       
+    </script>
+  </body>
+</html>
