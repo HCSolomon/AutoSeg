@@ -11,28 +11,19 @@ import java.net.URL;
 import java.nio.file.Paths;
 import java.util.List;
 
-public class SherlockTrain {
-    private DataPrep dataPrep;
-    private List<List<S3ObjectSummary>> objects;
-    private String model_pref;
-    private String model_name;
-
+public class SherlockTrain extends SherlockBase {
     public SherlockTrain(String platform_ip, String port, String bucket_name, String model_pref, String model_name) throws IOException, ApiException {
-        KubernetesAPI new_kube = new KubernetesAPI(platform_ip, port);
-        this.dataPrep = new DataPrep(new_kube, bucket_name);
-        this.objects = dataPrep.groupImages();
-        this.model_pref = model_pref;
-        this.model_name = model_name;
+        super(platform_ip, port, bucket_name, model_pref, model_name);
     }
 
     public void microTrain() {
         try {
-            URL url = new URL(dataPrep.getKubernetesAPI().getLink());
+            URL url = new URL(getDataPrep().getKubernetesAPI().getLink());
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("POST");
-            connection.setRequestProperty("bucket_name", this.dataPrep.getS3API().getData());
-            connection.setRequestProperty("bucket_prefix", this.model_pref);
-            connection.setRequestProperty("model_name", this.model_name);
+            connection.setRequestProperty("bucket_name", getDataPrep().getS3API().getData());
+            connection.setRequestProperty("bucket_prefix", getModelPrefix());
+            connection.setRequestProperty("model_name", getModelName());
 
             String json = "";
             if (connection.getResponseCode() == 200) {
@@ -56,15 +47,15 @@ public class SherlockTrain {
     }
 
     public void train() {
-        for (List<S3ObjectSummary> images : this.objects) {
+        for (List<S3ObjectSummary> images : getObjects()) {
             for (S3ObjectSummary os : images) {
                 String path = os.getKey();
                 String name = path.substring(path.lastIndexOf('/') + 1);
                 String folder = path.substring(0, path.lastIndexOf('/'));
                 String new_path = Paths.get(folder, "train", name).toString();
-                AmazonS3 s3 = dataPrep.getS3API().getS3();
-                s3.copyObject(dataPrep.getS3API().getData(), path,
-                        dataPrep.getS3API().getData(), new_path);
+                AmazonS3 s3 = getDataPrep().getS3API().getS3();
+                s3.copyObject(getDataPrep().getS3API().getData(), path,
+                        getDataPrep().getS3API().getData(), new_path);
             }
         }
         System.out.println("** Completed training model. **");
