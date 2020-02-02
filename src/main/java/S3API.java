@@ -4,13 +4,16 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.ListObjectsV2Result;
 import com.amazonaws.services.s3.model.S3ObjectSummary;
+import io.kubernetes.client.ApiException;
 
-import java.nio.file.Paths;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class S3API {
     private final AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.US_WEST_2).build();
-    private final String data;
+    public final String data;
+    private long size;
 
     public S3API(String bucket_name) {
         this.data = bucket_name;
@@ -22,25 +25,38 @@ public class S3API {
         return images;
     }
 
-    public void prepImages() {
+    public AmazonS3 getS3() {
+        return this.s3;
+    }
+
+    public List<List<S3ObjectSummary>> groupImages() throws IOException, ApiException {
         ListObjectsV2Result objects = s3.listObjectsV2(this.data);
         List<S3ObjectSummary> images = objects.getObjectSummaries();
+        KubernetesAPI kubernetesAPI = new KubernetesAPI();
 
+        long capacity = kubernetesAPI.getPodCapacity() / 2;
+        long size = 0;
+
+        List<List<S3ObjectSummary>> groups = new ArrayList<>();
+        List<S3ObjectSummary> group = new ArrayList<>();
         try {
             for (S3ObjectSummary os : images) {
-                String path = os.getKey();
-                String name = path.substring(path.lastIndexOf('/') + 1);
-                String folder = path.substring(0,path.lastIndexOf('/'));
-                String new_path = Paths.get(folder, "train", name).toString();
-                s3.copyObject(this.data, path, this.data, new_path);
+                size += os.getSize();
+                group.add(os);
+                if (size > capacity) {
+                    groups.add(new ArrayList<S3ObjectSummary>(group));
+                    group.clear();
+                }
             }
         } catch (AmazonServiceException e) {
             System.err.println(e.getErrorMessage());
             System.exit(1);
         }
+
+        return groups;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException, ApiException {
         S3API s = new S3API("data-watson");
 
         List<S3ObjectSummary> ims = s.getImages();
@@ -48,11 +64,6 @@ public class S3API {
             System.out.println(os.getKey());
         }
 
-        s.prepImages();
-        List<S3ObjectSummary> ims2 = s.getImages();
-
-        for (S3ObjectSummary os : ims2) {
-            System.out.println(os.getKey());
-        }
+        s.groupImages();
     }
 }
