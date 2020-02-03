@@ -12,8 +12,8 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class SherlockTrain extends SherlockBase {
-    public SherlockTrain(String platform_ip, String port, String bucket_name, String model_pref, String model_name) throws IOException, ApiException {
-        super(platform_ip, port, bucket_name, model_pref, model_name);
+    public SherlockTrain(String bucket_name, String model_pref, String model_name) throws IOException, ApiException {
+        super(bucket_name, model_pref, model_name);
     }
 
     public void train(String url, String bucket) {

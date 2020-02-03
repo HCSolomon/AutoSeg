@@ -8,11 +8,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class SherlockInference extends SherlockBase {
-    public SherlockInference(String platform_ip, String port, String bucket_name, String model_pref, String model_name) throws IOException, ApiException {
-        super(platform_ip, port, bucket_name, model_pref, model_name);
+    public SherlockInference(String bucket_name, String model_pref, String model_name) throws IOException, ApiException {
+        super(bucket_name, model_pref, model_name);
     }
 
-    public void retrain(String url, String bucket) {
+    public void inference(String url, String bucket) {
         try {
             URL client = new URL(url);
             HttpURLConnection connection = (HttpURLConnection) client.openConnection();

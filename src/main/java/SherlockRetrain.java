@@ -8,8 +8,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class SherlockRetrain extends SherlockBase {
-    public SherlockRetrain(String platform_ip, String port, String bucket_name, String model_pref, String model_name) throws IOException, ApiException {
-        super(platform_ip, port, bucket_name, model_pref, model_name);
+    public SherlockRetrain(String bucket, String model_pref, String model_name) throws IOException, ApiException {
+        super(bucket, model_pref, model_name);
     }
 
     public void retrain(String url, String bucket) {
