@@ -11,11 +11,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class S3API {
-    private final AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.US_WEST_2).build();
+    private final AmazonS3 s3;
     private final String data;
     private long size;
 
-    public S3API(String bucket_name) {
+    public S3API(AmazonS3 s3, String bucket_name) {
+        this.s3 = s3;
         this.data = bucket_name;
     }
 
@@ -34,7 +35,8 @@ public class S3API {
     }
 
     public static void main(String[] args) throws IOException, ApiException {
-        S3API s = new S3API("data-watson");
+        AmazonS3 s3 = AmazonS3ClientBuilder.standard().withRegion(Regions.US_WEST_2).build();
+        S3API s = new S3API(s3, "data-watson");
 
         List<S3ObjectSummary> ims = s.getImages();
         for (S3ObjectSummary os : ims) {

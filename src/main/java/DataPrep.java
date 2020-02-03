@@ -11,9 +11,9 @@ public class DataPrep {
     private final KubernetesAPI kubernetesAPI;
     private final S3API s3API;
 
-    public DataPrep(KubernetesAPI kubernetesAPI, String bucket_name) {
+    public DataPrep(KubernetesAPI kubernetesAPI, AmazonS3 s3, String bucket_name) {
         this.kubernetesAPI = kubernetesAPI;
-        this.s3API = new S3API(bucket_name);
+        this.s3API = new S3API(s3, bucket_name);
     }
 
     public S3API getS3API() {

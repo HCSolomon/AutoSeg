@@ -12,12 +12,12 @@ public class SherlockInference extends SherlockBase {
         super(platform_ip, port, bucket_name, model_pref, model_name);
     }
 
-    public void retrain() {
+    public void retrain(String url, String bucket) {
         try {
-            URL url = new URL(getDataPrep().getKubernetesAPI().getLink(), "inceptionv3", "label");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            URL client = new URL(url);
+            HttpURLConnection connection = (HttpURLConnection) client.openConnection();
             connection.setRequestMethod("POST");
-            connection.setRequestProperty("bucket_name", getDataPrep().getS3API().getData());
+            connection.setRequestProperty("bucket_name", bucket);
             connection.setRequestProperty("bucket_prefix", getModelPrefix());
             connection.setRequestProperty("model_name", getModelName());
 

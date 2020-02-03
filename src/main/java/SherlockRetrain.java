@@ -12,14 +12,14 @@ public class SherlockRetrain extends SherlockBase {
         super(platform_ip, port, bucket_name, model_pref, model_name);
     }
 
-    public void retrain() {
+    public void retrain(String url, String bucket) {
         try {
-            URL url = new URL(getDataPrep().getKubernetesAPI().getLink(), "inceptionv3", "retrain");
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            URL client = new URL(url);
+            HttpURLConnection connection = (HttpURLConnection) client.openConnection();
             connection.setRequestMethod("POST");
             connection.setRequestProperty("epochs", "5");
             connection.setRequestProperty("batch_size", "30");
-            connection.setRequestProperty("bucket_name", getDataPrep().getS3API().getData());
+            connection.setRequestProperty("bucket_name", bucket);
             connection.setRequestProperty("bucket_prefix", getModelPrefix());
             connection.setRequestProperty("model_name", getModelName());
 
