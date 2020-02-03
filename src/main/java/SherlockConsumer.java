@@ -46,17 +46,20 @@ public class SherlockConsumer {
                 for (S3ObjectSummary os : ims) {
                     process(bucket, path, task);
                 }
-                if (task == "train") {
-                    SherlockTrain train = new SherlockTrain(bucket, model_pref, model_name);
+                if (task.equals("train")) {
+                    SherlockTrain train = new SherlockTrain(KAFKA_IP, KAFKA_PORT, bucket, model_pref, model_name);
                     train.train(url, bucket);
                 }
-                else if (task == "retrain") {
-                    SherlockRetrain retrain = new SherlockRetrain(bucket, model_pref, model_name);
+                else if (task.equals("retrain")) {
+                    SherlockRetrain retrain = new SherlockRetrain(KAFKA_IP, KAFKA_PORT, bucket, model_pref, model_name);
                     retrain.retrain(url, bucket);
                 }
-                else {
-                    SherlockInference infer = new SherlockInference(bucket, model_pref, model_name);
+                else if (task.equals("inference")) {
+                    SherlockInference infer = new SherlockInference(KAFKA_IP, KAFKA_PORT, bucket, model_pref, model_name);
                     infer.inference(url, bucket);
+                }
+                else {
+                    System.out.println("** This is not a valid task. Please initiate using 'train', 'retrain', or 'inference'. **");
                 }
             }
         }
